@@ -1,159 +1,272 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
    <head>
       <meta charset="UTF-8" />
       <title>Commission Calculator</title>
       <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <style> body { font-family: system-ui, sans-serif; padding: 16px; background:#111; color:#eee; } h1 { font-size: 20px; margin-bottom: 12px; } .field { margin-bottom: 12px; } label { display:block; margin-bottom:4px; } .row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; } .qty-box { display:flex; align-items:center; gap:4px; } .qty-box button { width:28px; height:28px; border:none; border-radius:4px; background:#333; color:#fff; font-size:18px; line-height:1; } .qty-box span { min-width:24px; text-align:center; display:inline-block; } button#bookBtn { width:100%; padding:12px; margin-top:16px; font-size:16px; border:none; border-radius:6px; background:#2ea44f; color:white; } button#bookBtn:disabled { background:#555; } small { color:#aaa; } .checkbox-row { display:flex; align-items:center; gap:8px; } </style>
-      <script src="https://telegram.org/js/telegram-web-app.js"></script> 
+      <style>
+         body {
+            font-family: system-ui, sans-serif;
+            padding: 16px;
+            background: #111;
+            color: #eee;
+         }
+         h1 {
+            font-size: 20px;
+            margin-bottom: 12px;
+         }
+         .field {
+            margin-bottom: 12px;
+         }
+         label {
+            display: block;
+            margin-bottom: 4px;
+         }
+         .row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+         }
+         .qty-box {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+         }
+         .qty-box button {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 4px;
+            background: #333;
+            color: #fff;
+            font-size: 18px;
+            line-height: 1;
+         }
+         .qty-box span {
+            min-width: 24px;
+            text-align: center;
+            display: inline-block;
+         }
+         button#bookBtn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            background: #2ea44f;
+            color: white;
+         }
+         button#bookBtn:disabled {
+            background: #555;
+         }
+         small {
+            color: #aaa;
+         }
+         .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+         }
+      </style>
+      <script src="https://telegram.org/js/telegram-web-app.js"></script>
    </head>
    <body>
-      <h1>Art Commission Calculator</h1>
+      <h1>@Arrwulf Commission Calculator</h1>
+	  <p><small>v0.3a</small></p>
       <div class="field">
-         <label>Characters (30 USD each)</label> 
+         <label>Characters (30 USD each)</label>
          <div class="row">
-            <div class="qty-box" data-key="characters"> <button type="button" data-action="minus">-</button> <span data-value>1</span> <button type="button" data-action="plus">+</button> </div>
+            <div class="qty-box" data-key="characters">
+               <button type="button" data-action="minus">-</button>
+               <span data-value>1</span>
+               <button type="button" data-action="plus">+</button>
+            </div>
          </div>
       </div>
       <div class="field">
-         <label>Background crowd (10 USD each)</label> 
+         <label>Background crowd (10 USD each)</label>
          <div class="row">
-            <div class="qty-box" data-key="backgroundCrowd"> <button type="button" data-action="minus">-</button> <span data-value>0</span> <button type="button" data-action="plus">+</button> </div>
+            <div class="qty-box" data-key="backgroundCrowd">
+               <button type="button" data-action="minus">-</button>
+               <span data-value>0</span>
+               <button type="button" data-action="plus">+</button>
+            </div>
          </div>
       </div>
       <div class="field">
-         <label>Alt pose (15 USD each)</label> 
-         <div class="qty-box" data-key="altPose"> <button type="button" data-action="minus">-</button> <span data-value>0</span> <button type="button" data-action="plus">+</button> </div>
+         <label>Alt pose (15 USD each)</label>
+         <div class="qty-box" data-key="altPose">
+            <button type="button" data-action="minus">-</button>
+            <span data-value>0</span>
+            <button type="button" data-action="plus">+</button>
+         </div>
       </div>
       <div class="field">
-         <label>Alt outfit (10 USD each)</label> 
-         <div class="qty-box" data-key="altOutfit"> <button type="button" data-action="minus">-</button> <span data-value>0</span> <button type="button" data-action="plus">+</button> </div>
+         <label>Alt outfit (10 USD each)</label>
+         <div class="qty-box" data-key="altOutfit">
+            <button type="button" data-action="minus">-</button>
+            <span data-value>0</span>
+            <button type="button" data-action="plus">+</button>
+         </div>
       </div>
       <div class="field">
-         <label>Alt layer (5 USD each)</label> 
-         <div class="qty-box" data-key="altLayer"> <button type="button" data-action="minus">-</button> <span data-value>0</span> <button type="button" data-action="plus">+</button> </div>
+         <label>Alt layer (5 USD each)</label>
+         <div class="qty-box" data-key="altLayer">
+            <button type="button" data-action="minus">-</button>
+            <span data-value>0</span>
+            <button type="button" data-action="plus">+</button>
+         </div>
       </div>
       <div class="field">
-         <label>Additional panels (10 USD each)</label> 
-         <div class="qty-box" data-key="additionalPanel"> <button type="button" data-action="minus">-</button> <span data-value>0</span> <button type="button" data-action="plus">+</button> </div>
+         <label>Additional panels (10 USD each)</label>
+         <div class="qty-box" data-key="additionalPanel">
+            <button type="button" data-action="minus">-</button>
+            <span data-value>0</span>
+            <button type="button" data-action="plus">+</button>
+         </div>
       </div>
       <div class="field">
-         <div class="checkbox-row"> <input type="checkbox" id="simpleBackground" /> <label for="simpleBackground" style="margin:0;">Simple background (-10 USD)</label> </div>
+         <div class="checkbox-row">
+            <input type="checkbox" id="simpleBackground" />
+            <label for="simpleBackground" style="margin: 0"
+               >Simple background (-10 USD)</label
+            >
+         </div>
       </div>
-      <button id="bookBtn" disabled>Total cost: 0 USD – pick a date now</button> 
+      <button id="bookBtn" disabled>Total cost: 0 USD – pick a date now</button>
+	  <p><small>After clicking the button above, data will be copied into your device's clipboard, just paste them in the appropriate text field after you've selected the date.</small></p>
       <script>
          const tg = window.Telegram ? window.Telegram.WebApp : null;
          const state = {
-         characters: 1,
-         backgroundCrowd: 0,
-         altPose: 0,
-         altOutfit: 0,
-         altLayer: 0,
-         additionalPanel: 0,
-         simpleBackground: false
+            characters: 1,
+            backgroundCrowd: 0,
+            altPose: 0,
+            altOutfit: 0,
+            altLayer: 0,
+            additionalPanel: 0,
+            simpleBackground: false,
          };
-         const bookBtn = document.getElementById('bookBtn');
-         const simpleBackgroundCheckbox = document.getElementById('simpleBackground');
-         
+         const bookBtn = document.getElementById("bookBtn");
+         const simpleBackgroundCheckbox =
+            document.getElementById("simpleBackground");
          function calcTotal() {
-         const {
-         characters,
-         backgroundCrowd,
-         altPose,
-         altOutfit,
-         altLayer,
-         additionalPanel,
-         simpleBackground
-         } = state;
-         let total = 0;
-         total += characters * 30;
-         total += backgroundCrowd * 10; // 10 each, no auto discount 
-         total += altPose * 15;
-         total += altOutfit * 10;
-         total += altLayer * 5;
-         total += additionalPanel * 10;
-         if (simpleBackground) {
-         total -= 10; // -10 USD if simple background checked 
+            const {
+               characters,
+               backgroundCrowd,
+               altPose,
+               altOutfit,
+               altLayer,
+               additionalPanel,
+               simpleBackground,
+            } = state;
+            let total = 0;
+            total += characters * 30;
+            total += backgroundCrowd * 10;
+            total += altPose * 15;
+            total += altOutfit * 10;
+            total += altLayer * 5;
+            total += additionalPanel * 10;
+            if (simpleBackground) {
+               total -= 10;
+            }
+            if (total < 0) total = 0;
+            const label = `Total cost: ${total} USD – pick a date now`;
+            bookBtn.textContent = label;
+            bookBtn.disabled = total === 0;
+            return {
+               total,
+               characters,
+               backgroundCrowd,
+               altPose,
+               altOutfit,
+               altLayer,
+               additionalPanel,
+               simpleBackground,
+            };
          }
-         if (total < 0) total = 0;
-         const label = `Total cost: ${total} USD – pick a date now`;
-         bookBtn.textContent = label;
-         bookBtn.disabled = total === 0;
-         return {
-         total,
-         characters,
-         backgroundCrowd,
-         altPose,
-         altOutfit,
-         altLayer,
-         additionalPanel,
-         simpleBackground
-         };
-         }
-         
          function renderQuantities() {
-         document.querySelectorAll('.qty-box').forEach(box => {
-         const key = box.getAttribute('data-key');
-         const span = box.querySelector('[data-value]');
-         span.textContent = state[key];
+            document.querySelectorAll(".qty-box").forEach((box) => {
+               const key = box.getAttribute("data-key");
+               const span = box.querySelector("[data-value]");
+               span.textContent = state[key];
+            });
+            simpleBackgroundCheckbox.checked = state.simpleBackground;
+         }
+         document.querySelectorAll(".qty-box button").forEach((btn) => {
+            btn.addEventListener("click", () => {
+               const box = btn.closest(".qty-box");
+               const key = box.getAttribute("data-key");
+               const action = btn.getAttribute("data-action");
+               if (action === "plus") {
+                  state[key] += 1;
+               } else if (action === "minus") {
+                  state[key] = Math.max(0, state[key] - 1);
+               }
+               renderQuantities();
+               calcTotal();
+            });
          });
-         simpleBackgroundCheckbox.checked = state.simpleBackground;
-         }
-         document.querySelectorAll('.qty-box button').forEach(btn => {
-         btn.addEventListener('click', () => {
-         const box = btn.closest('.qty-box');
-         const key = box.getAttribute('data-key');
-         const action = btn.getAttribute('data-action');
-         if (action === 'plus') {
-         state[key] += 1;
-         } else if (action === 'minus') {
-         state[key] = Math.max(0, state[key] - 1);
-         }
+         simpleBackgroundCheckbox.addEventListener("change", () => {
+            state.simpleBackground = simpleBackgroundCheckbox.checked;
+            calcTotal();
+         });
          renderQuantities();
          calcTotal();
-         });
-         });
-         simpleBackgroundCheckbox.addEventListener('change', () => {
-         state.simpleBackground = simpleBackgroundCheckbox.checked;
-         calcTotal();
-         });
-         renderQuantities();
-         calcTotal();
-         
-         function buildGoogleCalendarUrl(order) {
-         const now = new Date();
-         const start = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-         const end = new Date(start.getTime() + 60 * 60 * 1000);
-         
-         function toCal(d) {
-         const pad = n => String(n).padStart(2, '0');
-         return d.getUTCFullYear().toString() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + 'Z';
+         async function copyToClipboard(text) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+               try {
+                  await navigator.clipboard.writeText(text);
+                  return true;
+               } catch (e) {
+                  return false;
+               }
+            } else {
+               const textarea = document.createElement("textarea");
+               textarea.value = text;
+               textarea.style.position = "fixed";
+               textarea.style.left = "-9999px";
+               document.body.appendChild(textarea);
+               textarea.focus();
+               textarea.select();
+               try {
+                  document.execCommand("copy");
+                  document.body.removeChild(textarea);
+                  return true;
+               } catch (e) {
+                  document.body.removeChild(textarea);
+                  return false;
+               }
+            }
          }
-         const startStr = toCal(start);
-         const endStr = toCal(end);
-         const title = 'Art Commission Booking';
-         const details = `TOTAL PRICE: ${order.total} USD\n` + `Characters: ${order.characters}\n` + `Background crowd: ${order.backgroundCrowd}\n` + `Alt pose: ${order.altPose}\n` + `Alt outfit: ${order.altOutfit}\n` + `Alt layer: ${order.altLayer}\n` + `Additional panels: ${order.additionalPanel}\n` + `Simple background: ${order.simpleBackground ? 'Yes (-10 USD)' : 'No'}`;
-         const params = new URLSearchParams({
-         action: 'TEMPLATE',
-         text: title,
-         details: details,
-         dates: `${startStr}/${endStr}`
-         });
-         return 'https://calendar.google.com/calendar/render?' + params.toString();
+         function buildOrderText(order) {
+            return (
+               `TOTAL PRICE: ${order.total} USD\n` +
+               `Characters: ${order.characters}\n` +
+               `Background crowd: ${order.backgroundCrowd}\n` +
+               `Alt pose: ${order.altPose}\n` +
+               `Alt outfit: ${order.altOutfit}\n` +
+               `Alt layer: ${order.altLayer}\n` +
+               `Additional panels: ${order.additionalPanel}\n` +
+               `Simple background: ${order.simpleBackground ? "Yes (-10 USD)" : "No"}\n`
+            );
          }
-         bookBtn.addEventListener('click', () => {
-         const order = calcTotal();
-         const url = buildGoogleCalendarUrl(order);
+         bookBtn.addEventListener("click", async () => {
+            const order = calcTotal();
+            const text = buildOrderText(order);
+            await copyToClipboard(text);
+            const url = "https://calendar.app.google/mEp6KcTrbwNCGTZU8";
+            if (tg) {
+               tg.openLink(url);
+            } else {
+               window.location.href = url;
+            }
+         });
          if (tg) {
-         tg.openLink(url);
-         } else {
-         window.location.href = url;
+            tg.expand();
+            tg.MainButton.hide();
          }
-         });
-         if (tg) {
-         tg.expand();
-         tg.MainButton.hide();
-         }           
-      </script> 
+      </script>
    </body>
 </html>
