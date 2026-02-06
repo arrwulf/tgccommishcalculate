@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Commission Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            padding: 16px;
+            background: #111;
+            color: #eee;
+           }
+           h1 {
+            font-size: 20px;
+            margin-bottom: 12px;
+           }
+           .field {
+            margin-bottom: 10px;
+           }
+           label {
+            display: block;
+            margin-bottom: 4px;
+           }
+           input[type="number"] {
+            width: 80px;
+            padding: 4px;
+           }
+           .row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+           }
+           button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 16px;
+            font-size: 16px;
+            border: none;
+            border-radius: 6px;
+            background: #2ea44f;
+            color: white;
+           }
+           button:disabled {
+            background: #555;
+           }
+           small {
+            color: #aaa;
+           }
+    </style>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body>
+    <h1>Art Commission Calculator</h1>
+    <div class="field">
+        <label>Characters (30 USD each)</label>
+        <div class="row">
+            <input type="number" id="characters" min="0" value="1" />
+        </div>
+    </div>
+    <div class="field">
+        <label>Background crowd (10 USD)</label>
+        <div class="row">
+            <input type="number" id="backgroundCrowd" min="0" value="1" />
+            <small>Set to 0 for no background (gets 10 USD discount).</small>
+        </div>
+    </div>
+    <div class="field">
+        <label>Alt pose (15 USD each)</label>
+        <input type="number" id="altPose" min="0" value="0" />
+    </div>
+    <div class="field">
+        <label>Alt outfit (10 USD each)</label>
+        <input type="number" id="altOutfit" min="0" value="0" />
+    </div>
+    <div class="field">
+        <label>Alt layer (5 USD each)</label>
+        <input type="number" id="altLayer" min="0" value="0" />
+    </div>
+    <div class="field">
+        <label>Additional panels (10 USD each)</label>
+        <input type="number" id="additionalPanel" min="0" value="0" />
+    </div>
+    <button id="bookBtn" disabled>Total cost: 0 USD – pick a date now</button>
+    <script>
+        const tg = window.Telegram ? window.Telegram.WebApp : null; const charactersInput = document.getElementById('characters'); const backgroundCrowdInput = document.getElementById('backgroundCrowd'); const altPoseInput = document.getElementById('altPose'); const altOutfitInput = document.getElementById('altOutfit'); const altLayerInput = document.getElementById('altLayer'); const additionalPanelInput = document.getElementById('additionalPanel'); const bookBtn = document.getElementById('bookBtn'); function toInt(el) { const v = parseInt(el.value, 10); return isNaN(v) ? 0 : Math.max(0, v); } function calcTotal() { const characters = toInt(charactersInput); const backgroundCrowd = toInt(backgroundCrowdInput); const altPose = toInt(altPoseInput); const altOutfit = toInt(altOutfitInput); const altLayer = toInt(altLayerInput); const additionalPanel = toInt(additionalPanelInput); let total = 0; total += characters * 30; total += backgroundCrowd * 10; total += altPose * 15; total += altOutfit * 10; total += altLayer * 5; total += additionalPanel * 10; if (backgroundCrowd === 0) { total -= 10; } if (total < 0) total = 0; const label = `Total cost: ${total} USD – pick a date now`; bookBtn.textContent = label; bookBtn.disabled = total === 0; return { total, characters, backgroundCrowd, altPose, altOutfit, altLayer, additionalPanel }; } [charactersInput, backgroundCrowdInput, altPoseInput, altOutfitInput, altLayerInput, additionalPanelInput] .forEach(el => el.addEventListener('input', calcTotal)); calcTotal(); function buildGoogleCalendarUrl(order) { 
+          // Dummy times just to satisfy Calendar; user will adjust on the page. 
+          const now = new Date(); const start = new Date(now.getTime() + 24 * 60 * 60 * 1000); const end = new Date(start.getTime() + 60 * 60 * 1000); function toCal(d) { const pad = n => String(n).padStart(2, '0'); return d.getUTCFullYear().toString() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + 'Z'; } const startStr = toCal(start); const endStr = toCal(end); const title = 'Art Commission Booking'; 
+          // >>> This is the important part: TOTAL PRICE in description <<< 
+          const details = `TOTAL PRICE: ${order.total} USD\n` + `Characters: ${order.characters}\n` + `Background crowd: ${order.backgroundCrowd}\n` + `Alt pose: ${order.altPose}\n` + `Alt outfit: ${order.altOutfit}\n` + `Alt layer: ${order.altLayer}\n` + `Additional panels: ${order.additionalPanel}`; const params = new URLSearchParams({ action: 'TEMPLATE', text: title, details: details, dates: `${startStr}/${endStr}` }); return 'https://calendar.google.com/calendar/render?' + params.toString(); } bookBtn.addEventListener('click', () => { const order = calcTotal(); const url = buildGoogleCalendarUrl(order); if (tg) { tg.openLink(url); } else { window.location.href = url; } }); if (tg) { tg.expand(); tg.MainButton.hide(); }
+    </script>
+</body>
+
+</html>
