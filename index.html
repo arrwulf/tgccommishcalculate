@@ -155,7 +155,7 @@
             <label>Additional Panels <small>$10 each</small></label>
             <div class="qty-box" data-key="additionalPanel">
                <button type="button" data-action="minus">−</button>
-               <span data-value>1</span>
+               <span data-value>0</span>
                <button type="button" data-action="plus">+</button>
             </div>
          </div>
@@ -174,132 +174,116 @@
       <script>
          const tg = window.Telegram ? window.Telegram.WebApp : null;
 
-// Ensure the app takes up the full screen
 if (tg) {
-  tg.expand();
-  tg.ready();
+    tg.expand();
+    tg.ready();
 }
 
+// 1. Ensure state matches your HTML defaults exactly
 const state = {
-  characters: 1,
-  backgroundCrowd: 0,
-  altPose: 0,
-  altOutfit: 0,
-  altLayer: 0,
-  additionalPanel: 0,
-  simpleBackground: false,
+    characters: 1,
+    backgroundCrowd: 0,
+    altPose: 0,
+    altOutfit: 0,
+    altLayer: 0,
+    additionalPanel: 0, // Set to 0 to match calculation logic
+    simpleBackground: false,
 };
 
 const simpleBackgroundCheckbox = document.getElementById("simpleBackground");
 
 function calcTotal() {
-  const { characters, backgroundCrowd, altPose, altOutfit, altLayer, additionalPanel, simpleBackground } = state;
-  
-  let total = 0;
-  total += characters * 30;
-  total += backgroundCrowd * 10;
-  total += altPose * 15;
-  total += altOutfit * 10;
-  total += altLayer * 5;
-  total += additionalPanel * 10;
-  if (simpleBackground) total -= 10;
-  if (total < 0) total = 0;
-  
-  // --- TELEGRAM MAIN BUTTON LOGIC ---
-  if (tg) {
-    if (total > 0) {
-      tg.MainButton.setText(`BOOK FOR $${total} USD`);
-      tg.MainButton.show();
-    } else {
-      tg.MainButton.hide();
+    let total = 0;
+    total += state.characters * 30;
+    total += state.backgroundCrowd * 10;
+    total += state.altPose * 15;
+    total += state.altOutfit * 10;
+    total += state.altLayer * 5;
+    total += state.additionalPanel * 10;
+
+    if (state.simpleBackground) {
+        total -= 10;
     }
-  }
-  
-  return { total, characters, backgroundCrowd, altPose, altOutfit, altLayer, additionalPanel, simpleBackground };
-}
 
-function renderQuantities() {
-  document.querySelectorAll(".qty-box").forEach((box) => {
-    const key = box.getAttribute("data-key");
-    const span = box.querySelector("[data-value]");
-    span.textContent = state[key];
-  });
-  simpleBackgroundCheckbox.checked = state.simpleBackground;
-}
+    // Prevent negative totals
+    if (total < 0) total = 0;
 
-document.querySelectorAll(".qty-box button").forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const box = btn.closest(".qty-box");
-    const key = box.getAttribute("data-key");
-    const action = btn.getAttribute("data-action");
-    if (action === "plus") {
-      state[key] += 1;
-    } else if (action === "minus") {
-      state[key] = Math.max(0, state[key] - 1);
+    // 2. Update Telegram Main Button
+    if (tg) {
+        if (total > 0) {
+            tg.MainButton.setText(`BOOK FOR $${total} USD`);
+            tg.MainButton.show();
+        } else {
+            tg.MainButton.hide();
+        }
     }
     
-    // Impact feedback on button press
-    if (tg) tg.HapticFeedback.impactOccurred('light');
+    return total;
+}
+
+function updateUI() {
+    // Sync all number spans with the current state
+    document.querySelectorAll(".qty-box").forEach((box) => {
+        const key = box.getAttribute("data-key");
+        const span = box.querySelector("[data-value]");
+        if (span && state[key] !== undefined) {
+            span.textContent = state[key];
+        }
+    });
     
-    renderQuantities();
+    // Sync checkbox
+    simpleBackgroundCheckbox.checked = state.simpleBackground;
+    
+    // Run calculation
     calcTotal();
-  });
+}
+
+// 3. Improved Event Listeners
+document.querySelectorAll(".qty-box button").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+        e.preventDefault(); // Prevent accidental double-taps
+        const box = btn.closest(".qty-box");
+        const key = box.getAttribute("data-key");
+        const action = btn.getAttribute("data-action");
+
+        if (action === "plus") {
+            state[key] += 1;
+        } else if (action === "minus") {
+            state[key] = Math.max(0, state[key] - 1);
+        }
+
+        if (tg) tg.HapticFeedback.impactOccurred('light');
+        
+        updateUI(); // Always update UI and Calculation together
+    });
 });
 
 simpleBackgroundCheckbox.addEventListener("change", () => {
-  state.simpleBackground = simpleBackgroundCheckbox.checked;
-  if (tg) tg.HapticFeedback.impactOccurred('light');
-  calcTotal();
+    state.simpleBackground = simpleBackgroundCheckbox.checked;
+    if (tg) tg.HapticFeedback.impactOccurred('light');
+    updateUI();
 });
 
-// Clipboard Helper
-async function copyToClipboard(text) {
-  try {
-    await navigator.clipboard.writeText(text);
-    return true;
-  } catch (e) {
-    // Fallback for older environments
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    document.body.appendChild(textarea);
-    textarea.select();
-    const success = document.execCommand("copy");
-    document.body.removeChild(textarea);
-    return success;
-  }
-}
+// 4. Initial call to set everything up correctly on load
+updateUI();
 
-function buildOrderText(order) {
-  return (
-    `TOTAL PRICE: ${order.total} USD\n` +
-    `Characters: ${order.characters}\n` +
-    `Background crowd: ${order.backgroundCrowd}\n` +
-    `Alt pose: ${order.altPose}\n` +
-    `Alt outfit: ${order.altOutfit}\n` +
-    `Alt layer: ${order.altLayer}\n` +
-    `Additional panels: ${order.additionalPanel}\n` +
-    `Simple background: ${order.simpleBackground ? "Yes (-10 USD)" : "No"}\n`
-  );
-}
-
-// Telegram Main Button Event
+// 5. Telegram Main Button Action
 if (tg) {
-  tg.onEvent('mainButtonClicked', async function() {
-    const order = calcTotal();
-    const text = buildOrderText(order);
-    
-    tg.HapticFeedback.notificationOccurred('success');
-    await copyToClipboard(text);
-    
-    tg.showAlert("Order details copied! Redirecting to calendar...", () => {
-      tg.openLink("https://calendar.app.google/mEp6KcTrbwNCGTZU8");
+    tg.onEvent('mainButtonClicked', async function() {
+        const total = calcTotal();
+        const orderText = buildOrderText({...state, total}); // Helper to build string
+        
+        tg.HapticFeedback.notificationOccurred('success');
+        
+        const success = await copyToClipboard(orderText);
+        
+        if (success) {
+            tg.showAlert("Order details copied to clipboard!", () => {
+                tg.openLink("https://calendar.app.google/mEp6KcTrbwNCGTZU8");
+            });
+        }
     });
-  });
 }
-
-// Initial Run
-renderQuantities();
-calcTotal();
       </script>
    </body>
 </html>
